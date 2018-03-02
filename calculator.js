@@ -1,157 +1,100 @@
-var calculator=(function(){
+var calculator = (function () {
 	'use strict'
-	
-	
-var currentNum="";
-var storedNum="";
-var result=0;
-var arrayOfNumbersAndOperations=[];	
-var stringToDisplay="";
-	
-const display=document.getElementById('display');
-const elementDiv=document.getElementById('calculator');
 
-	
-    elementDiv.addEventListener('click',(event)=>{
-	
-	const button=event.target;
-		
-		
-	const operatorButton = button.getAttribute('data-operation');
-    const clearButton = button.getAttribute('data-clear');
-    const equalButton = button.getAttribute('data-equal');
-	const numberButton=button.getAttribute('data-number');
-		
-		
 
-		 function displayInputs (){
-		
-				 if(stringToDisplay!=="")
-				 display.innerHTML=stringToDisplay;
-		
-	     }
-		 function createNumber(getNumber){
-		
-		  //check the lenght of inserted numbers and operators
-		if( stringToDisplay.length<=10){
-			
-			//do not let user to enter number on result from previous operation
-			if(result===0){
-	
-	        currentNum+=getNumber;
-			stringToDisplay+=getNumber;
-		    display.innerHTML=stringToDisplay;
-		
-	       }}
-	  } 
-		
-		if(clearButton){
-			
-		    arrayOfNumbersAndOperations=[];
-			currentNum="";
-			result=0;
-			stringToDisplay="";
-			display.innerHTML=result;
-			
+	var currentNum = "";
+	var storedNum = "";
+	var result = "";
+	var stringToDisplay = "";
+	const display = $('#display');
+
+
+
+
+	$(".operation").on("click", function () {
+
+		//if there is at least one operand and string is less than 12
+		if (currentNum && stringToDisplay.length < 12) {
+
+
+			storedNum = currentNum;
+			currentNum = "";
+			result = "";
+			stringToDisplay += $(this).text();
+
+			display.text(stringToDisplay);
+
 		}
-		
-		else if (equalButton){
-			
-			try{
-				
-				result=eval(stringToDisplay);
-				currentNum=result.toString();	
-				
-			}
-			catch(err){
-				
-				currentNum="";
-				display.innerHTML="error";
-			}
-	
-		 
-			 stringToDisplay=currentNum;
-			
-			 //set maximum number to display to 10
-			 if (stringToDisplay.length>10){
-				
-				 stringToDisplay=stringToDisplay.slice(0,10);
-				 
-			 }
-			
-			 
-		    arrayOfNumbersAndOperations=[];
-			displayInputs ();
-		    
-	        } 
-		
-		
-		//if pressed button holds operator
-		else if(operatorButton){
-			
-			if(currentNum!==""){
-				
-				storedNum=parseFloat(currentNum);
-				arrayOfNumbersAndOperations.push(storedNum);
-				
-				//after adding number to array,reset values
-				currentNum="";	
-				result=0;
-				
-				
-				function addOperator(operator){
-			arrayOfNumbersAndOperations.push(operator);
-					stringToDisplay+=operator;
-			
-				};
-				
-				
-		const operations={
-			
-		plus :()=>{
-	
-			addOperator("+");
-	        },
-		  minus :()=>{
-			
-				addOperator("-");
-		    },
-			  divide:()=>{
-	
-				addOperator("/");
-            },
-		   multiply:()=>{
-			   
-				addOperator("*");	   	
-		   }
-	        }
-	
-		//call corresponding operation
-			if( stringToDisplay.length<10)
-		operations[operatorButton]();
-				
-		displayInputs();
-		
-		};
-				
-		       }	
-		
-		//if pressed button holds a number
-		else if(numberButton){
-			
-			
-			//do not let user to input number with zero on first place
-			if(currentNum==="0" && numberButton!=="."){
-				currentNum="";
-				stringToDisplay=stringToDisplay.slice(0,-1);
-	
-			}
-			
-			createNumber(numberButton);
-			
-               }
-		
-		  });
 
-	})();
 
+	});
+
+	$(".number").on("click", function () {
+
+		//if first char is not 0 and currentNum is not previous result
+		if (currentNum !== "0" && stringToDisplay.length < 13 && !result) {
+
+			currentNum += $(this).text();
+			stringToDisplay += $(this).text();
+			console.log(stringToDisplay);
+			display.text(stringToDisplay);
+
+		}
+
+
+	});
+
+	$(".dot").on("click", function () {
+
+		//if currentNum is not empty string,does not have dot already,is not result of previous operation
+		if (currentNum && !currentNum.includes(".") && stringToDisplay.length < 12 && !result) {
+
+			currentNum += $(this).text();
+			stringToDisplay += $(this).text();
+			console.log(stringToDisplay);
+			display.text(stringToDisplay);
+
+		}
+
+	});
+
+
+	$(".equal").on("click", function () {
+
+		//if the last character in the string is number
+		if (currentNum) {
+
+			currentNum = eval(stringToDisplay) + "";
+			result = currentNum;
+			stringToDisplay = currentNum;
+			display.text(stringToDisplay);
+
+		}
+
+	});
+
+
+	$(".clear").on("click", function () {
+
+		if (stringToDisplay.length > 1) {
+
+			let num = currentNum;
+			currentNum = num.slice(0, num.length - 1);
+
+			let displ = stringToDisplay;
+			stringToDisplay = displ.slice(0, displ.length - 1);
+			display.text(stringToDisplay);
+
+		}
+		else{
+			currentNum="";
+			result="";
+			stringToDisplay="";
+			display.text(stringToDisplay);
+		}
+
+	});
+
+
+
+})();
